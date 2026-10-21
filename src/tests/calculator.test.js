@@ -1,4 +1,4 @@
-const { add, subtract, multiply, divide } = require('../calculator');
+const { add, subtract, multiply, divide, modulo, power, squareRoot } = require('../calculator');
 
 describe('add', () => {
   test('2 + 3 = 5', () => expect(add(2, 3)).toBe(5));
@@ -40,5 +40,53 @@ describe('divide', () => {
   });
   test('throws on zero divided by zero', () => {
     expect(() => divide(0, 0)).toThrow('Division by zero');
+  });
+});
+
+describe('modulo', () => {
+  test('5 % 2 = 1', () => expect(modulo(5, 2)).toBe(1));
+  test('10 % 3 = 1', () => expect(modulo(10, 3)).toBe(1));
+  test('negative divisor keeps dividend sign', () => expect(modulo(10, -3)).toBe(1));
+  test('0 % 5 = 0', () => expect(modulo(0, 5)).toBe(0));
+  test('0 % 0 throws', () => {
+    expect(() => modulo(0, 0)).toThrow('Modulo by zero');
+  });
+  test('evenly divisible gives 0', () => expect(modulo(10, 5)).toBe(0));
+  test('smaller dividend returns itself', () => expect(modulo(2, 5)).toBe(2));
+  test('negative dividend keeps sign', () => expect(modulo(-10, 3)).toBe(-1));
+  test('handles decimals', () => expect(modulo(5.5, 2)).toBeCloseTo(1.5));
+  test('throws on modulo by zero', () => {
+    expect(() => modulo(5, 0)).toThrow('Modulo by zero');
+  });
+});
+
+describe('power', () => {
+  test('2 ^ 3 = 8', () => expect(power(2, 3)).toBe(8));
+  test('2 ** 8 = 256', () => expect(power(2, 8)).toBe(256));
+  test('power of 1 returns the base', () => expect(power(7, 1)).toBe(7));
+  test('0 to a positive power is 0', () => expect(power(0, 5)).toBe(0));
+  test('0 ** 0 = 1', () => expect(power(0, 0)).toBe(1));
+  test('large exponent', () => expect(power(2, 30)).toBe(1073741824));
+  test('anything to the power 0 is 1', () => expect(power(5, 0)).toBe(1));
+  test('negative exponent', () => expect(power(2, -2)).toBe(0.25));
+  test('negative base', () => expect(power(-2, 3)).toBe(-8));
+  test('fractional exponent', () => expect(power(9, 0.5)).toBe(3));
+});
+
+describe('squareRoot', () => {
+  test('√16 = 4', () => expect(squareRoot(16)).toBe(4));
+  test('√1 = 1', () => expect(squareRoot(1)).toBe(1));
+  test('large perfect square', () => expect(squareRoot(1e10)).toBe(1e5));
+  test('throws for large negative numbers', () => {
+    expect(() => squareRoot(-1e6)).toThrow('negative number');
+  });
+  test('throws for small negative decimals', () => {
+    expect(() => squareRoot(-0.0001)).toThrow('negative number');
+  });
+  test('sqrt(0) = 0', () => expect(squareRoot(0)).toBe(0));
+  test('non-perfect squares', () => expect(squareRoot(2)).toBeCloseTo(1.41421356));
+  test('handles decimals', () => expect(squareRoot(0.25)).toBe(0.5));
+  test('throws for negative numbers', () => {
+    expect(() => squareRoot(-1)).toThrow('negative number');
   });
 });
