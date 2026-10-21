@@ -82,9 +82,11 @@ function main(argv) {
     console.error('Usage: node src/calculator.js <add|subtract|multiply|divide|modulo|power> <a> <b>\n       node src/calculator.js sqrt <a>');
     return 1;
   }
+  // Number('') and Number('  ') are 0, so blank operands must be rejected explicitly
+  const isBlank = (v) => typeof v === 'string' && v.trim() === '';
   const a = Number(rawA);
   const b = needsB ? Number(rawB) : undefined;
-  if (Number.isNaN(a) || (needsB && Number.isNaN(b))) {
+  if (isBlank(rawA) || (needsB && isBlank(rawB)) || Number.isNaN(a) || (needsB && Number.isNaN(b))) {
     console.error('Error: operands must be numbers.');
     return 1;
   }

@@ -120,4 +120,21 @@ describe('CLI', () => {
       expect(r.stderr).toContain('Usage');
     }
   );
+
+  test.each([
+    ['add', '', '5'],
+    ['add', '5', ''],
+    ['add', '  ', '5'],
+    ['sqrt', ''],
+    ['divide', '10', ''],
+  ])('rejects blank operand: %j', (...args) => {
+    const r = run(...args);
+    expect(r.status).toBe(1);
+    expect(r.stdout).toBe('');
+    expect(r.stderr).toContain('operands must be numbers');
+  });
+
+  test('still accepts zero as an operand', () => {
+    expect(run('add', '0', '5').stdout.trim()).toBe('5');
+  });
 });
