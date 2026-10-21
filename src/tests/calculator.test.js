@@ -1,3 +1,5 @@
+const { spawnSync } = require('child_process');
+const path = require('path');
 const { add, subtract, multiply, divide, modulo, power, squareRoot } = require('../calculator');
 
 describe('add', () => {
@@ -89,4 +91,33 @@ describe('squareRoot', () => {
   test('throws for negative numbers', () => {
     expect(() => squareRoot(-1)).toThrow('negative number');
   });
+});
+
+describe('package entry point', () => {
+  test("require('.') resolves to the calculator", () => {
+    const pkg = require('../../package.json');
+    expect(require(path.resolve(__dirname, '../..', pkg.main))).toHaveProperty('add');
+    expect(require.resolve('../..')).toBe(path.resolve(__dirname, '..', 'calculator.js'));
+  });
+});
+
+describe('CLI', () => {
+  const run = (...args) =>
+    spawnSync('node', [path.join(__dirname, '..', 'calculator.js'), ...args], { encoding: 'utf8' });
+
+  test('runs a supported operation', () => {
+    const r = run('add', '2', '3');
+    expect(r.stdout.trim()).toBe('5');
+    expect(r.status).toBe(0);
+  });
+
+  test.each(['toString', 'constructor', 'hasOwnProperty', '__proto__', 'valueOf'])(
+    'rejects inherited property name "%s"',
+    (name) => {
+      const r = run(name, '1', '2');
+      expect(r.status).toBe(1);
+      expect(r.stdout).toBe('');
+      expect(r.stderr).toContain('Usage');
+    }
+  );
 });

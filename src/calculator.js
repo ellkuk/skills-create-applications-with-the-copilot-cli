@@ -76,7 +76,7 @@ const unary = new Set([squareRoot]);
 
 function main(argv) {
   const [op, rawA, rawB] = argv;
-  const fn = operations[op];
+  const fn = Object.hasOwn(operations, op) ? operations[op] : undefined;
   const needsB = fn && !unary.has(fn);
   if (!fn || rawA === undefined || (needsB && rawB === undefined)) {
     console.error('Usage: node src/calculator.js <add|subtract|multiply|divide|modulo|power> <a> <b>\n       node src/calculator.js sqrt <a>');
